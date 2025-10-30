@@ -1,5 +1,6 @@
 // src/pages/SucursalesPage.jsx
 import { useEffect, useState } from "react";
+import NavInventarioInventory from "../components/Menu";
 
 const API_BASE = "http://localhost:8081/api";
 
@@ -138,6 +139,8 @@ export default function SucursalesPage() {
   }
 
   return (
+    <>
+    <NavInventarioInventory />
     <div className="max-w-5xl mx-auto p-6">
       <h1 className="text-2xl font-semibold mb-4">Sucursales</h1>
 
@@ -269,6 +272,7 @@ export default function SucursalesPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

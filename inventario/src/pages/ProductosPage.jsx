@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import NavInventarioInventory from "../components/Menu";
 
 const API_BASE = "http://localhost:8081/api";
 
@@ -89,7 +90,6 @@ export default function ProductosPage() {
     e.preventDefault();
     setMessage(null);
 
-    // Validaciones simples
     if (!form.nombre.trim()) {
       setMessage({ type: "error", text: "El nombre es obligatorio." });
       return;
@@ -181,6 +181,8 @@ export default function ProductosPage() {
   }
 
   return (
+    <>
+    <NavInventarioInventory />
     <div className="max-w-5xl mx-auto p-6">
       <h1 className="text-2xl font-semibold mb-4">Productos</h1>
       {message && (
@@ -361,6 +363,7 @@ export default function ProductosPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

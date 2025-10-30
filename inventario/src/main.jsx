@@ -12,6 +12,7 @@ import ConteoManualPage from "./pages/ConteoManualPage.jsx";
 import MovimientosPage from "./pages/MovimientosPage.jsx";
 import LotesVencidosPage from "./pages/LotesVencidosPage.jsx";
 import TransferirPage from "./pages/TransferirPage.jsx";
+import LoteSucursalesPage from './pages/LotesSucursalesPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,11 @@ const router = createBrowserRouter([
   {
     path: "/sucursales",
     element: <SucursalesPage />,
+  },
+  {
+    path: '/lotes-sucursales',
+    element: <LoteSucursalesPage />,
+
   },
   {
     path: "/reporte-stock",
