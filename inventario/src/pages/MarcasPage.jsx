@@ -1,5 +1,6 @@
 // src/pages/MarcasPage.jsx
 import { useEffect, useState } from "react";
+import NavInventarioInventory from "../components/Menu";
 
 const API_BASE = "http://localhost:8081/api";
 
@@ -124,10 +125,11 @@ export default function MarcasPage() {
   }
 
   return (
+    <>
+    <NavInventarioInventory />
     <div className="max-w-4xl mx-auto p-6">
       <h1 className="text-2xl font-semibold mb-4">Marcas</h1>
 
-      {/* Mensajes */}
       {message && (
         <div
           className={[
@@ -141,7 +143,6 @@ export default function MarcasPage() {
         </div>
       )}
 
-      {/* FORM */}
       <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm mb-8">
         <h2 className="text-lg font-medium mb-4">
           {editingId ? "Editar marca" : "Crear marca"}
@@ -178,7 +179,6 @@ export default function MarcasPage() {
         </form>
       </div>
 
-      {/* LISTA */}
       <div className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-medium">Listado</h3>
@@ -240,6 +240,7 @@ export default function MarcasPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

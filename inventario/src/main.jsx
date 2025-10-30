@@ -7,6 +7,7 @@ import ProductosPage from './pages/ProductosPage.jsx';
 import MarcasPage from './pages/MarcasPage.jsx';
 import LotesPage from './pages/LotesPage.jsx';
 import SucursalesPage from './pages/SucursalesPage.jsx';
+import LoteSucursalesPage from './pages/LotesSucursalesPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,11 @@ const router = createBrowserRouter([
   {
     path: '/sucursales',
     element: <SucursalesPage />,
+  },
+  {
+    path: '/lotes-sucursales',
+    element: <LoteSucursalesPage />,
+
   }
 ]);
 createRoot(document.getElementById('root')).render(
