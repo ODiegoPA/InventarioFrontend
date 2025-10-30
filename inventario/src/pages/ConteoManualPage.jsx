@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import NavInventarioInventory from "../components/Menu";
 
 function downloadCSV(filename, rows) {
   const csvContent = rows
@@ -110,100 +111,103 @@ export default function ConteoManualPage() {
   if (error) return <div className="p-6 text-red-600">{error}</div>;
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Conteo manual de inventario</h1>
+    <>
+      <NavInventarioInventory />
+      <div className="container mx-auto p-6">
+        <h1 className="text-2xl font-bold mb-4">Conteo manual de inventario</h1>
 
-      <div className="mb-4 flex items-center gap-4">
-        <label className="text-sm font-medium">Sucursal:</label>
-        <select
-          className="border rounded p-2"
-          value={sucursalId ?? ""}
-          onChange={(e) => setSucursalId(Number(e.target.value))}
-        >
-          {(sucursales || []).map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.nombre}
-            </option>
-          ))}
-        </select>
-      </div>
+        <div className="mb-4 flex items-center gap-4">
+          <label className="text-sm font-medium">Sucursal:</label>
+          <select
+            className="border rounded p-2"
+            value={sucursalId ?? ""}
+            onChange={(e) => setSucursalId(Number(e.target.value))}
+          >
+            {(sucursales || []).map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      <div className="bg-white shadow rounded-lg p-4 overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                Producto
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                Actual
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                Contado
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                Diferencia
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {productosForSucursal.map((p) => {
-              const contado = counts[p.id] === undefined ? "" : counts[p.id];
-              const actual = p.currentCantidad || 0;
-              const diff = Number(countedOrZero(contado)) - actual;
-              return (
-                <tr key={p.id}>
-                  <td className="px-4 py-2">{p.nombre}</td>
-                  <td className="px-4 py-2">{actual}</td>
-                  <td className="px-4 py-2">
-                    <input
-                      type="number"
-                      className="border rounded px-2 py-1 w-28"
-                      value={contado}
-                      onChange={(e) =>
-                        setCount(
-                          p.id,
-                          e.target.value === "" ? "" : Number(e.target.value)
-                        )
-                      }
-                    />
-                  </td>
-                  <td
-                    className={`px-4 py-2 ${
-                      diff === 0
-                        ? "text-gray-600"
-                        : diff > 0
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {Number.isNaN(diff) ? "-" : diff}
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+        <div className="bg-white shadow rounded-lg p-4 overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  Producto
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  Actual
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  Contado
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  Diferencia
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {productosForSucursal.map((p) => {
+                const contado = counts[p.id] === undefined ? "" : counts[p.id];
+                const actual = p.currentCantidad || 0;
+                const diff = Number(countedOrZero(contado)) - actual;
+                return (
+                  <tr key={p.id}>
+                    <td className="px-4 py-2">{p.nombre}</td>
+                    <td className="px-4 py-2">{actual}</td>
+                    <td className="px-4 py-2">
+                      <input
+                        type="number"
+                        className="border rounded px-2 py-1 w-28"
+                        value={contado}
+                        onChange={(e) =>
+                          setCount(
+                            p.id,
+                            e.target.value === "" ? "" : Number(e.target.value)
+                          )
+                        }
+                      />
+                    </td>
+                    <td
+                      className={`px-4 py-2 ${
+                        diff === 0
+                          ? "text-gray-600"
+                          : diff > 0
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    >
+                      {Number.isNaN(diff) ? "-" : diff}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
 
-      <div className="mt-4 flex gap-3">
-        <button
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-          onClick={handleExport}
-        >
-          Exportar ajustes (CSV)
-        </button>
-        <button
-          className="bg-gray-200 px-4 py-2 rounded"
-          onClick={() => {
-            setCounts({});
-            alert("Conteos reiniciados en la sesión.");
-          }}
-        >
-          Reiniciar
-        </button>
+        <div className="mt-4 flex gap-3">
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+            onClick={handleExport}
+          >
+            Exportar ajustes (CSV)
+          </button>
+          <button
+            className="bg-gray-200 px-4 py-2 rounded"
+            onClick={() => {
+              setCounts({});
+              alert("Conteos reiniciados en la sesión.");
+            }}
+          >
+            Reiniciar
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 

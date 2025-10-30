@@ -7,17 +7,19 @@ const links = [
   { to: "/lotes", label: "Lotes" },
   { to: "/sucursales", label: "Sucursales" },
   { to: "/lotes-sucursales", label: "Lote-Sucursales" },
+  { to: "/reporte-stock", label: "Reporte stock" },
+  { to: "/conteo-inventario", label: "Conteo inventario" },
+  { to: "/movimientos", label: "Movimientos" },
+  { to: "/lotes-vencidos", label: "Lotes vencidos" },
+  { to: "/transferir", label: "Transferir" },
 ];
 
 export default function NavInventarioInventory() {
   const [open, setOpen] = useState(false);
 
-  const base =
-    "px-3 py-2 rounded-md text-sm font-medium transition-colors";
-  const active =
-    "bg-blue-600 text-white";
-  const inactive =
-    "text-neutral-800 hover:bg-neutral-100";
+  const base = "px-3 py-2 rounded-md text-sm font-medium transition-colors";
+  const active = "bg-blue-600 text-white";
+  const inactive = "text-neutral-800 hover:bg-neutral-100";
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-neutral-200 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">

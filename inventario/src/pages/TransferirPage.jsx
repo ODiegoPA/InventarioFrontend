@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import NavInventarioInventory from "../components/Menu";
 
 export default function TransferirPage() {
   const location = useLocation();
@@ -107,135 +108,136 @@ export default function TransferirPage() {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">
-        Transferir productos entre sucursales
-      </h1>
-      {error && <div className="mb-4 text-red-600">{error}</div>}
+    <>
+      <NavInventarioInventory />
+      <div className="container mx-auto p-6">
+        <h1 className="text-2xl font-bold mb-4">
+          Transferir productos entre sucursales
+        </h1>
+        {error && <div className="mb-4 text-red-600">{error}</div>}
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow rounded-lg p-4 grid gap-4"
-      >
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-gray-600">Producto</label>
-            <select
-              className="border rounded p-2 w-full"
-              value={productoId}
-              onChange={(e) => setProductoId(e.target.value)}
-              required
-            >
-              <option value="">-- selecciona --</option>
-              {productos.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white shadow rounded-lg p-4 grid gap-4"
+        >
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-600">Producto</label>
+              <select
+                className="border rounded p-2 w-full"
+                value={productoId}
+                onChange={(e) => setProductoId(e.target.value)}
+                required
+              >
+                <option value="">-- selecciona --</option>
+                {productos.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-sm text-gray-600">
-              Lote (opcional)
-            </label>
-            <select
-              className="border rounded p-2 w-full"
-              value={loteId}
-              onChange={(e) => setLoteId(e.target.value)}
-            >
-              <option value="">Ninguno</option>
-              {lotes
-                .filter((l) => !l.dadoDeBaja)
-                .map((l) => (
+            <div>
+              <label className="block text-sm text-gray-600">
+                Lote (opcional)
+              </label>
+              <select
+                className="border rounded p-2 w-full"
+                value={loteId}
+                onChange={(e) => setLoteId(e.target.value)}
+              >
+                <option value="">Ninguno</option>
+                {lotes.map((l) => (
                   <option key={l.id} value={l.id}>
                     {l.codigoLote} — {l.producto?.nombre ?? ""} — {l.cantidad}
                   </option>
                 ))}
-            </select>
+              </select>
+            </div>
           </div>
-        </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-gray-600">
-              Origen (sucursal)
-            </label>
-            <select
-              className="border rounded p-2 w-full"
-              value={origenId}
-              onChange={(e) => setOrigenId(e.target.value)}
-              required
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm text-gray-600">
+                Origen (sucursal)
+              </label>
+              <select
+                className="border rounded p-2 w-full"
+                value={origenId}
+                onChange={(e) => setOrigenId(e.target.value)}
+                required
+              >
+                <option value="">-- selecciona --</option>
+                {sucursales.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm text-gray-600">
+                Destino (sucursal)
+              </label>
+              <select
+                className="border rounded p-2 w-full"
+                value={destinoId}
+                onChange={(e) => setDestinoId(e.target.value)}
+                required
+              >
+                <option value="">-- selecciona --</option>
+                {sucursales.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 items-end">
+            <div>
+              <label className="block text-sm text-gray-600">Cantidad</label>
+              <input
+                type="number"
+                min="1"
+                className="border rounded p-2 w-full"
+                value={cantidad}
+                onChange={(e) => setCantidad(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-sm text-gray-600">Motivo</label>
+              <input
+                type="text"
+                className="border rounded p-2 w-full"
+                value={motivo}
+                onChange={(e) => setMotivo(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              className="bg-green-600 text-white px-4 py-2 rounded"
+              disabled={submitting}
             >
-              <option value="">-- selecciona --</option>
-              {sucursales.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.nombre}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm text-gray-600">
-              Destino (sucursal)
-            </label>
-            <select
-              className="border rounded p-2 w-full"
-              value={destinoId}
-              onChange={(e) => setDestinoId(e.target.value)}
-              required
+              Enviar transferencia
+            </button>
+            <button
+              type="button"
+              className="bg-gray-200 px-4 py-2 rounded"
+              onClick={() => navigate(-1)}
             >
-              <option value="">-- selecciona --</option>
-              {sucursales.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.nombre}
-                </option>
-              ))}
-            </select>
+              Cancelar
+            </button>
           </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4 items-end">
-          <div>
-            <label className="block text-sm text-gray-600">Cantidad</label>
-            <input
-              type="number"
-              min="1"
-              className="border rounded p-2 w-full"
-              value={cantidad}
-              onChange={(e) => setCantidad(e.target.value)}
-              required
-            />
-          </div>
-          <div className="col-span-2">
-            <label className="block text-sm text-gray-600">Motivo</label>
-            <input
-              type="text"
-              className="border rounded p-2 w-full"
-              value={motivo}
-              onChange={(e) => setMotivo(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="flex gap-3">
-          <button
-            type="submit"
-            className="bg-green-600 text-white px-4 py-2 rounded"
-            disabled={submitting}
-          >
-            Enviar transferencia
-          </button>
-          <button
-            type="button"
-            className="bg-gray-200 px-4 py-2 rounded"
-            onClick={() => navigate(-1)}
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
+    </>
   );
 }

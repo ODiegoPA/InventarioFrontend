@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import NavInventarioInventory from "../components/Menu";
 
 function downloadCSV(filename, rows) {
   const csvContent = rows
@@ -120,126 +121,132 @@ export default function MovimientosPage() {
   if (error) return <div className="p-6 text-red-600">{error}</div>;
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Reporte de movimientos</h1>
+    <>
+      <NavInventarioInventory />
+      <div className="container mx-auto p-6">
+        <h1 className="text-2xl font-bold mb-4">Reporte de movimientos</h1>
 
-      <div className="mb-4 flex flex-wrap gap-3 items-center">
-        <div>
-          <label className="block text-sm text-gray-600">Producto</label>
-          <select
-            value={fProducto}
-            onChange={(e) => setFProducto(e.target.value)}
-            className="border rounded p-2"
-          >
-            <option value="">Todos</option>
-            {(productos || []).map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.nombre}
-              </option>
-            ))}
-          </select>
+        <div className="mb-4 flex flex-wrap gap-3 items-center">
+          <div>
+            <label className="block text-sm text-gray-600">Producto</label>
+            <select
+              value={fProducto}
+              onChange={(e) => setFProducto(e.target.value)}
+              className="border rounded p-2"
+            >
+              <option value="">Todos</option>
+              {(productos || []).map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.nombre}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm text-gray-600">Tipo</label>
+            <select
+              value={fTipo}
+              onChange={(e) => setFTipo(e.target.value)}
+              className="border rounded p-2"
+            >
+              <option value="">Todos</option>
+              {tipos.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="ml-auto">
+            <button
+              className="bg-blue-600 text-white px-4 py-2 rounded mr-2"
+              onClick={handleExport}
+            >
+              Exportar CSV
+            </button>
+          </div>
         </div>
 
-        <div>
-          <label className="block text-sm text-gray-600">Tipo</label>
-          <select
-            value={fTipo}
-            onChange={(e) => setFTipo(e.target.value)}
-            className="border rounded p-2"
-          >
-            <option value="">Todos</option>
-            {tipos.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="ml-auto">
-          <button
-            className="bg-blue-600 text-white px-4 py-2 rounded mr-2"
-            onClick={handleExport}
-          >
-            Exportar CSV
-          </button>
-        </div>
-      </div>
-
-      <div className="bg-white shadow rounded-lg overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                Fecha
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                Tipo
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                Producto
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                Lote
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                Origen
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                Destino
-              </th>
-              <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">
-                Cantidad
-              </th>
-              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
-                Motivo
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {filtered.map((m) => {
-              const prod = productosMap[m.productoId];
-              const origen = m.origenId
-                ? sucursalesMap[m.origenId]
-                  ? sucursalesMap[m.origenId].nombre
-                  : `#${m.origenId}`
-                : "-";
-              const destino = m.destinoId
-                ? sucursalesMap[m.destinoId]
-                  ? sucursalesMap[m.destinoId].nombre
-                  : `#${m.destinoId}`
-                : "-";
-              return (
-                <tr key={m.id}>
-                  <td className="px-4 py-2 text-sm text-gray-700">
-                    {new Date(m.fechaMovimiento).toLocaleString()}
-                  </td>
-                  <td className="px-4 py-2 text-sm font-medium">{m.tipo}</td>
-                  <td className="px-4 py-2 text-sm">
-                    {prod ? prod.nombre : `#${m.productoId}`}
-                  </td>
-                  <td className="px-4 py-2 text-sm">{m.loteId ?? "-"}</td>
-                  <td className="px-4 py-2 text-sm">{origen}</td>
-                  <td className="px-4 py-2 text-sm">{destino}</td>
-                  <td className="px-4 py-2 text-right text-sm font-semibold">
-                    {m.cantidad}
-                  </td>
-                  <td className="px-4 py-2 text-sm text-gray-600">
-                    {m.motivo ?? ""}
+        <div className="bg-white shadow rounded-lg overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  Fecha
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  Tipo
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  Producto
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  Lote
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  Origen
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  Destino
+                </th>
+                <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">
+                  Cantidad
+                </th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                  Motivo
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filtered.map((m) => {
+                const prod = productosMap[m.productoId];
+                const origen = m.origenId
+                  ? sucursalesMap[m.origenId]
+                    ? sucursalesMap[m.origenId].nombre
+                    : `#${m.origenId}`
+                  : "-";
+                const destino = m.destinoId
+                  ? sucursalesMap[m.destinoId]
+                    ? sucursalesMap[m.destinoId].nombre
+                    : `#${m.destinoId}`
+                  : "-";
+                return (
+                  <tr key={m.id}>
+                    <td className="px-4 py-2 text-sm text-gray-700">
+                      {new Date(m.fechaMovimiento).toLocaleString()}
+                    </td>
+                    <td className="px-4 py-2 text-sm font-medium">{m.tipo}</td>
+                    <td className="px-4 py-2 text-sm">
+                      {prod ? prod.nombre : `#${m.productoId}`}
+                    </td>
+                    <td className="px-4 py-2 text-sm">{m.loteId ?? "-"}</td>
+                    <td className="px-4 py-2 text-sm">{origen}</td>
+                    <td className="px-4 py-2 text-sm">{destino}</td>
+                    <td className="px-4 py-2 text-right text-sm font-semibold">
+                      {m.cantidad}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-gray-600">
+                      {m.motivo ?? ""}
+                    </td>
+                  </tr>
+                );
+              })}
+              {filtered.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={8}
+                    className="px-4 py-6 text-center text-gray-500"
+                  >
+                    No hay movimientos que coincidan con el filtro.
                   </td>
                 </tr>
-              );
-            })}
-            {filtered.length === 0 && (
-              <tr>
-                <td colSpan={8} className="px-4 py-6 text-center text-gray-500">
-                  No hay movimientos que coincidan con el filtro.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
