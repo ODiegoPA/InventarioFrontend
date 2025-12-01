@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import NavInventarioInventory from "../components/Menu";
-
-const API_BASE = "http://localhost:8081/api";
+import { authFetch, API_BASE } from "../utils/api";
 
 export default function ProductosPage() {
   const [marcas, setMarcas] = useState([]);
@@ -41,8 +40,8 @@ export default function ProductosPage() {
     (async () => {
       try {
         const [resMarcas, resProductos] = await Promise.all([
-          fetch(`${API_BASE}/marcas`),
-          fetch(`${API_BASE}/productos`),
+          authFetch(`${API_BASE}/marcas`),
+          authFetch(`${API_BASE}/productos`),
         ]);
 
         if (!resMarcas.ok) throw new Error("No se pudo cargar marcas");
@@ -80,7 +79,7 @@ export default function ProductosPage() {
   };
 
   const loadProductos = async () => {
-    const res = await fetch(`${API_BASE}/productos`);
+    const res = await authFetch(`${API_BASE}/productos`);
     if (!res.ok) throw new Error("No se pudo refrescar la lista de productos");
     const data = await res.json();
     setProductos(Array.isArray(data) ? data : []);
@@ -114,9 +113,8 @@ export default function ProductosPage() {
 
       const method = editingId ? "PUT" : "POST";
 
-      const res = await fetch(url, {
+      const res = await authFetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -157,7 +155,7 @@ export default function ProductosPage() {
     setLoading(true);
     setMessage(null);
     try {
-      const res = await fetch(`${API_BASE}/productos/${id}`, { method: "DELETE" });
+      const res = await authFetch(`${API_BASE}/productos/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const err = await safeJson(res);
         throw new Error(err?.message || "No se pudo eliminar");

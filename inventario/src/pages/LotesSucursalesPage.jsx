@@ -1,8 +1,7 @@
 // src/pages/LoteSucursalesPage.jsx
 import { useEffect, useMemo, useState } from "react";
 import NavInventarioInventory from "../components/Menu";
-
-const API_BASE = "http://localhost:8081/api";
+import { authFetch, API_BASE } from "../utils/api";
 
 export default function LoteSucursalesPage() {
   const [lotes, setLotes] = useState([]);
@@ -33,9 +32,9 @@ export default function LoteSucursalesPage() {
     (async () => {
       try {
         const [resLotes, resSuc, resLS] = await Promise.all([
-          fetch(`${API_BASE}/lotes`),
-          fetch(`${API_BASE}/sucursales`),
-          fetch(`${API_BASE}/lote-sucursales`),
+          authFetch(`${API_BASE}/lotes`),
+          authFetch(`${API_BASE}/sucursales`),
+          authFetch(`${API_BASE}/lote-sucursales`),
         ]);
         if (!resLotes.ok) throw new Error("No se pudo cargar lotes");
         if (!resSuc.ok) throw new Error("No se pudo cargar sucursales");
@@ -64,7 +63,7 @@ export default function LoteSucursalesPage() {
       try {
         // 1) Detalle lote
         let det = null;
-        const r = await fetch(`${API_BASE}/lotes/${id}`);
+        const r = await authFetch(`${API_BASE}/lotes/${id}`);
         if (r.ok) det = await r.json();
         if (!det) det = lotesMap[String(id)] ?? { id: Number(id) };
         if (cancelled) return;
@@ -80,7 +79,7 @@ export default function LoteSucursalesPage() {
           lotesMap[String(id)]?.productoId;
 
         if (productoId) {
-          const rp = await fetch(`${API_BASE}/productos/${productoId}`);
+          const rp = await authFetch(`${API_BASE}/productos/${productoId}`);
           if (cancelled) return;
           if (rp.ok) {
             const prod = await rp.json();
@@ -89,7 +88,7 @@ export default function LoteSucursalesPage() {
             // 3) Marca
             const marcaId = prod?.marca?.id ?? prod?.marcaId;
             if (marcaId && !(prod?.marca?.nombre)) {
-              const rm = await fetch(`${API_BASE}/marcas/${marcaId}`);
+              const rm = await authFetch(`${API_BASE}/marcas/${marcaId}`);
               if (!cancelled && rm.ok) setMarcaDetalle(await rm.json());
             } else if (prod?.marca) {
               setMarcaDetalle(prod.marca);
@@ -116,7 +115,7 @@ export default function LoteSucursalesPage() {
   const resetForm = () => setForm({ loteId: "", sucursalId: "", cantidad: 1 });
 
   const loadLoteSucursales = async () => {
-    const res = await fetch(`${API_BASE}/lote-sucursales`);
+    const res = await authFetch(`${API_BASE}/lote-sucursales`);
     if (!res.ok) throw new Error("No se pudo refrescar la lista");
     setLoteSucursales(await res.json());
   };
@@ -180,9 +179,8 @@ export default function LoteSucursalesPage() {
 
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/lote-sucursales`, {
+      const res = await authFetch(`${API_BASE}/lote-sucursales`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       if (!res.ok) {
@@ -407,7 +405,7 @@ function LoteSucursalRow({ row, lotesMap, sucursalesMap, productCache, setProduc
 
     (async () => {
       try {
-        const resp = await fetch(`${API_BASE}/productos/${productId}`);
+        const resp = await authFetch(`${API_BASE}/productos/${productId}`);
         if (!resp.ok) return;
         const prod = await resp.json();
         if (cancelled) return;

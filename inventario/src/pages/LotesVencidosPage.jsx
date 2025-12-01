@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NavInventarioInventory from "../components/Menu";
+import { authFetch } from "../utils/api";
 
 export default function LotesVencidosPage() {
   const [lotes, setLotes] = useState([]);
@@ -11,7 +12,7 @@ export default function LotesVencidosPage() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch("http://localhost:8081/api/lotes")
+    authFetch("http://localhost:8081/api/lotes")
       .then((r) => r.json())
       .then((data) => setLotes(data || []))
       .catch((err) => {

@@ -13,52 +13,64 @@ import MovimientosPage from "./pages/MovimientosPage.jsx";
 import LotesVencidosPage from "./pages/LotesVencidosPage.jsx";
 import TransferirPage from "./pages/TransferirPage.jsx";
 import LoteSucursalesPage from './pages/LotesSucursalesPage.jsx';
+import LoginPage from "./pages/LoginPage.jsx";
+import SignUpPage from "./pages/SignUpPage.jsx";
+import LandingPage from "./pages/LandingPage.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <LandingPage />,
   },
   {
     path: "/productos",
-    element: <ProductosPage />,
+    element: <ProtectedRoute><ProductosPage /></ProtectedRoute>,
   },
   {
     path: "/marcas",
-    element: <MarcasPage />,
+    element: <ProtectedRoute><MarcasPage /></ProtectedRoute>,
   },
   {
     path: "/lotes",
-    element: <LotesPage />,
+    element: <ProtectedRoute><LotesPage /></ProtectedRoute>,
   },
   {
     path: "/sucursales",
-    element: <SucursalesPage />,
+    element: <ProtectedRoute><SucursalesPage /></ProtectedRoute>,
   },
   {
     path: '/lotes-sucursales',
-    element: <LoteSucursalesPage />,
+    element: <ProtectedRoute><LoteSucursalesPage /></ProtectedRoute>,
 
   },
   {
     path: "/reporte-stock",
-    element: <ReporteStockPage />,
+    element: <ProtectedRoute><ReporteStockPage /></ProtectedRoute>,
   },
   {
     path: "/lotes-vencidos",
-    element: <LotesVencidosPage />,
+    element: <ProtectedRoute><LotesVencidosPage /></ProtectedRoute>,
   },
   {
     path: "/conteo-inventario",
-    element: <ConteoManualPage />,
+    element: <ProtectedRoute><ConteoManualPage /></ProtectedRoute>,
   },
   {
     path: "/transferir",
-    element: <TransferirPage />,
+    element: <ProtectedRoute><TransferirPage /></ProtectedRoute>,
   },
   {
     path: "/movimientos",
-    element: <MovimientosPage />,
+    element: <ProtectedRoute><MovimientosPage /></ProtectedRoute>,
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/signup",
+    element: <SignUpPage />,
   },
 ]);
 createRoot(document.getElementById("root")).render(

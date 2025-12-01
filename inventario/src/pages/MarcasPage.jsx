@@ -1,8 +1,7 @@
 // src/pages/MarcasPage.jsx
 import { useEffect, useState } from "react";
 import NavInventarioInventory from "../components/Menu";
-
-const API_BASE = "http://localhost:8081/api";
+import { authFetch, API_BASE } from "../utils/api";
 
 export default function MarcasPage() {
   const [marcas, setMarcas] = useState([]);
@@ -16,7 +15,7 @@ export default function MarcasPage() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`${API_BASE}/marcas`);
+        const res = await authFetch(`${API_BASE}/marcas`);
         if (!res.ok) throw new Error("No se pudo cargar marcas");
         const data = await res.json();
         setMarcas(Array.isArray(data) ? data : []);
@@ -39,7 +38,7 @@ export default function MarcasPage() {
   };
 
   const loadMarcas = async () => {
-    const res = await fetch(`${API_BASE}/marcas`);
+    const res = await authFetch(`${API_BASE}/marcas`);
     if (!res.ok) throw new Error("No se pudo refrescar la lista de marcas");
     const data = await res.json();
     setMarcas(Array.isArray(data) ? data : []);
@@ -62,9 +61,8 @@ export default function MarcasPage() {
         : `${API_BASE}/marcas`;
       const method = editingId ? "PUT" : "POST";
 
-      const res = await fetch(url, {
+      const res = await authFetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -101,7 +99,7 @@ export default function MarcasPage() {
     setLoading(true);
     setMessage(null);
     try {
-      const res = await fetch(`${API_BASE}/marcas/${id}`, { method: "DELETE" });
+      const res = await authFetch(`${API_BASE}/marcas/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const err = await safeJson(res);
         throw new Error(err?.message || "No se pudo eliminar");

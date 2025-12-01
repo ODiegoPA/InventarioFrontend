@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import NavInventarioInventory from "../components/Menu";
+import { authFetch } from "../utils/api";
 
 function downloadCSV(filename, rows) {
   const csvContent = rows
@@ -27,9 +28,9 @@ export default function ConteoManualPage() {
     setLoading(true);
     setError(null);
     Promise.all([
-      fetch("http://localhost:8081/api/productos").then((r) => r.json()),
-      fetch("http://localhost:8081/api/stock").then((r) => r.json()),
-      fetch("http://localhost:8081/api/sucursales").then((r) => r.json()),
+      authFetch("http://localhost:8081/api/productos").then((r) => r.json()),
+      authFetch("http://localhost:8081/api/stock").then((r) => r.json()),
+      authFetch("http://localhost:8081/api/sucursales").then((r) => r.json()),
     ])
       .then(([productosData, stockData, sucursalesData]) => {
         setProductos(productosData || []);

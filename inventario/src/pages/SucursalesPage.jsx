@@ -1,8 +1,7 @@
 // src/pages/SucursalesPage.jsx
 import { useEffect, useState } from "react";
 import NavInventarioInventory from "../components/Menu";
-
-const API_BASE = "http://localhost:8081/api";
+import { authFetch, API_BASE } from "../utils/api";
 
 export default function SucursalesPage() {
   const [sucursales, setSucursales] = useState([]);
@@ -19,7 +18,7 @@ export default function SucursalesPage() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await fetch(`${API_BASE}/sucursales`);
+        const res = await authFetch(`${API_BASE}/sucursales`);
         if (!res.ok) throw new Error("No se pudo cargar sucursales");
         const data = await res.json();
         setSucursales(Array.isArray(data) ? data : []);
@@ -42,7 +41,7 @@ export default function SucursalesPage() {
   };
 
   const loadSucursales = async () => {
-    const res = await fetch(`${API_BASE}/sucursales`);
+    const res = await authFetch(`${API_BASE}/sucursales`);
     if (!res.ok) throw new Error("No se pudo refrescar la lista");
     const data = await res.json();
     setSucursales(Array.isArray(data) ? data : []);
@@ -73,9 +72,8 @@ export default function SucursalesPage() {
         : `${API_BASE}/sucursales`;
       const method = editingId ? "PUT" : "POST";
 
-      const res = await fetch(url, {
+      const res = await authFetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -115,7 +113,7 @@ export default function SucursalesPage() {
     setLoading(true);
     setMessage(null);
     try {
-      const res = await fetch(`${API_BASE}/sucursales/${id}`, { method: "DELETE" });
+      const res = await authFetch(`${API_BASE}/sucursales/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const err = await safeJson(res);
         throw new Error(err?.message || "No se pudo eliminar");

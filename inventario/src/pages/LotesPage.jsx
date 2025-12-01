@@ -1,8 +1,8 @@
 // src/pages/LotesPage.jsx
 import { useEffect, useMemo, useState } from "react";
 import NavInventarioInventory from "../components/Menu";
+import { authFetch, API_BASE } from "../utils/api";
 
-const API_BASE = "http://localhost:8081/api";
 const WARN_DAYS = 30;
 
 export default function LotesPage() {
@@ -39,8 +39,8 @@ export default function LotesPage() {
     (async () => {
       try {
         const [resProd, resLotes] = await Promise.all([
-          fetch(`${API_BASE}/productos`),
-          fetch(`${API_BASE}/lotes`),
+          authFetch(`${API_BASE}/productos`),
+          authFetch(`${API_BASE}/lotes`),
         ]);
         if (!resProd.ok) throw new Error("No se pudo cargar productos");
         if (!resLotes.ok) throw new Error("No se pudo cargar lotes");
@@ -72,7 +72,7 @@ export default function LotesPage() {
   };
 
   const loadLotes = async () => {
-    const res = await fetch(`${API_BASE}/lotes`);
+    const res = await authFetch(`${API_BASE}/lotes`);
     if (!res.ok) throw new Error("No se pudo refrescar la lista de lotes");
     const data = await res.json();
     setLotes(Array.isArray(data) ? data : []);
@@ -136,9 +136,8 @@ export default function LotesPage() {
         notificacionActiva: true, // por defecto activada
       };
 
-      const res = await fetch(`${API_BASE}/lotes`, {
+      const res = await authFetch(`${API_BASE}/lotes`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -168,7 +167,7 @@ export default function LotesPage() {
     setLoading(true);
     setMessage(null);
     try {
-      const res = await fetch(`${API_BASE}/lotes/${id}`, { method: "DELETE" });
+      const res = await authFetch(`${API_BASE}/lotes/${id}`, { method: "DELETE" });
       if (!res.ok) {
         const err = await safeJson(res);
         throw new Error(err?.message || "No se pudo eliminar");
@@ -190,7 +189,7 @@ export default function LotesPage() {
     setLoading(true);
     setMessage(null);
     try {
-      const res = await fetch(
+      const res = await authFetch(
         `${API_BASE}/lotes/${id}/toggle-notificacion?enabled=${enabled}`,
         { method: "PATCH" }
       );
