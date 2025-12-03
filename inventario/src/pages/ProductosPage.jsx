@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import NavInventarioInventory from "../components/Menu";
-import { authFetch, API_BASE } from "../utils/api";
+import { authFetch, publicFetch, API_BASE, SERVER_URL } from "../utils/api";
 
 export default function ProductosPage() {
   const [marcas, setMarcas] = useState([]);
@@ -15,6 +15,8 @@ export default function ProductosPage() {
     marcaId: "",
     descripcion: "",
     activo: true,
+    foto: null,
+    fotoPreview: "",
   });
 
   const marcasMap = useMemo(() => {
@@ -40,8 +42,8 @@ export default function ProductosPage() {
     (async () => {
       try {
         const [resMarcas, resProductos] = await Promise.all([
-          authFetch(`${API_BASE}/marcas`),
-          authFetch(`${API_BASE}/productos`),
+          publicFetch(`${API_BASE}/marcas`),
+          publicFetch(`${API_BASE}/productos`),
         ]);
 
         if (!resMarcas.ok) throw new Error("No se pudo cargar marcas");
@@ -67,6 +69,8 @@ export default function ProductosPage() {
       marcaId: "",
       descripcion: "",
       activo: true,
+      foto: null,
+      fotoPreview: "",
     });
   };
 
@@ -78,8 +82,15 @@ export default function ProductosPage() {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setForm((f) => ({ ...f, foto: file, fotoPreview: URL.createObjectURL(file) }));
+    }
+  };
+
   const loadProductos = async () => {
-    const res = await authFetch(`${API_BASE}/productos`);
+    const res = await publicFetch(`${API_BASE}/productos`);
     if (!res.ok) throw new Error("No se pudo refrescar la lista de productos");
     const data = await res.json();
     setProductos(Array.isArray(data) ? data : []);
@@ -100,12 +111,14 @@ export default function ProductosPage() {
 
     setLoading(true);
     try {
-      const payload = {
-        nombre: form.nombre.trim(),
-        marcaId: Number(form.marcaId),
-        descripcion: form.descripcion?.trim() ?? "",
-        activo: Boolean(form.activo),
-      };
+      const formData = new FormData();
+      formData.append("nombre", form.nombre.trim());
+      formData.append("marcaId", form.marcaId);
+      formData.append("descripcion", form.descripcion?.trim() ?? "");
+      formData.append("activo", form.activo);
+      if (form.foto) {
+        formData.append("file", form.foto);
+      }
 
       const url = editingId
         ? `${API_BASE}/productos/${editingId}`
@@ -113,9 +126,11 @@ export default function ProductosPage() {
 
       const method = editingId ? "PUT" : "POST";
 
-      const res = await authFetch(url, {
+      const token = localStorage.getItem("token");
+      const res = await fetch(url, {
         method,
-        body: JSON.stringify(payload),
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
       });
 
       if (!res.ok) {
@@ -143,6 +158,8 @@ export default function ProductosPage() {
       marcaId: String(getMarcaIdFromProduct(p) ?? ""),
       descripcion: p.descripcion ?? "",
       activo: Boolean(p.activo ?? true),
+      foto: null,
+      fotoPreview: p.foto ?? "",
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -242,6 +259,37 @@ export default function ProductosPage() {
             />
           </div>
 
+          <div className="col-span-1 md:col-span-2">
+            <label className="block text-sm mb-1">Foto</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full rounded-lg border border-neutral-300 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-1 file:text-blue-700 hover:file:bg-blue-100"
+            />
+          </div>
+
+          {form.fotoPreview && (
+            <div className="col-span-1 md:col-span-2">
+              <label className="block text-sm mb-1">Vista previa</label>
+              <div className="flex items-center gap-3">
+                <img
+                  src={form.fotoPreview}
+                  alt="Vista previa"
+                  className="h-20 w-20 object-cover rounded-lg border border-neutral-200"
+                  onError={(e) => e.target.style.display = 'none'}
+                />
+                <button
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, foto: null, fotoPreview: "" }))}
+                  className="text-sm text-red-600 hover:text-red-800"
+                >
+                  Quitar imagen
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="col-span-1 flex items-center gap-2">
             <input
               id="activo"
@@ -301,6 +349,7 @@ export default function ProductosPage() {
             <thead className="bg-neutral-50 text-neutral-600">
               <tr>
                 <th className="px-3 py-2 text-left">ID</th>
+                <th className="px-3 py-2 text-left">Foto</th>
                 <th className="px-3 py-2 text-left">Nombre</th>
                 <th className="px-3 py-2 text-left">Marca</th>
                 <th className="px-3 py-2 text-left">Descripción</th>
@@ -311,16 +360,25 @@ export default function ProductosPage() {
             <tbody>
               {productos.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="px-3 py-6 text-center text-neutral-500">
+                  <td colSpan="7" className="px-3 py-6 text-center text-neutral-500">
                     No hay productos.
                   </td>
                 </tr>
               ) : (
                 productos.map((p) => {
                   const id = p.id ?? p.productoId ?? "";
+                  const foto = p.foto ?? "";
+                  const fotoUrl = foto ? `${SERVER_URL}${foto}` : "";
                   return (
                     <tr key={id} className="border-t border-neutral-100">
                       <td className="px-3 py-2">{id}</td>
+                      <td className="px-3 py-2">
+                        {fotoUrl ? (
+                          <img src={fotoUrl} alt={p.nombre} className="h-10 w-10 object-cover rounded" />
+                        ) : (
+                          <span className="text-neutral-400">-</span>
+                        )}
+                      </td>
                       <td className="px-3 py-2">{p.nombre}</td>
                       <td className="px-3 py-2">
                         {getMarcaNombreFromProduct(p) || getMarcaIdFromProduct(p)}

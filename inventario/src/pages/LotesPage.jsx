@@ -1,7 +1,7 @@
 // src/pages/LotesPage.jsx
 import { useEffect, useMemo, useState } from "react";
 import NavInventarioInventory from "../components/Menu";
-import { authFetch, API_BASE } from "../utils/api";
+import { authFetch, publicFetch, API_BASE } from "../utils/api";
 
 const WARN_DAYS = 30;
 
@@ -39,7 +39,7 @@ export default function LotesPage() {
     (async () => {
       try {
         const [resProd, resLotes] = await Promise.all([
-          authFetch(`${API_BASE}/productos`),
+          publicFetch(`${API_BASE}/productos`),
           authFetch(`${API_BASE}/lotes`),
         ]);
         if (!resProd.ok) throw new Error("No se pudo cargar productos");

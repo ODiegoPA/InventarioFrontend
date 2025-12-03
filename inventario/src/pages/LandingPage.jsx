@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Chatbot from "../components/Chatbot";
 
 const API_BASE = "http://localhost:8081/api";
+const SERVER_URL = "http://localhost:8081";
 
 // Configuración del Hero - Puedes cambiar esta imagen
 const HERO_CONFIG = {
@@ -25,7 +26,6 @@ const IMAGENES_PRODUCTOS = [
 const SUPERMARKET_INFO = {
   nombre: "SuperMarket Express",
   slogan: "Calidad y ahorro para tu familia",
-  telefono: "+591 2 2411234",
   whatsapp: "+591 70012345",
   email: "contacto@supermarketexpress.com",
 };
@@ -86,7 +86,18 @@ export default function LandingPage() {
 
   // Obtener imagen para un producto (usa imagen del producto o una por defecto)
   const getProductoImagen = (producto, index) => {
-    return producto.imagen || IMAGENES_PRODUCTOS[index % IMAGENES_PRODUCTOS.length];
+    if (producto.foto) {
+      return `${SERVER_URL}${producto.foto}`;
+    }
+    return IMAGENES_PRODUCTOS[index % IMAGENES_PRODUCTOS.length];
+  };
+
+  // Obtener imagen de marca
+  const getMarcaImagen = (marca) => {
+    if (marca.foto) {
+      return `${SERVER_URL}${marca.foto}`;
+    }
+    return null;
   };
 
   // Productos destacados (primeros 6 productos activos)
@@ -274,56 +285,56 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section
         id="hero"
-        className="relative min-h-[80vh] flex items-center"
+        className="relative min-h-[60vh] sm:min-h-[70vh] md:min-h-[80vh] flex items-center"
         style={{
-          backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%), url(${HERO_CONFIG.backgroundImage})`,
+          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.3) 100%), url(${HERO_CONFIG.backgroundImage})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 py-20 w-full">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20 w-full">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 backdrop-blur-sm rounded-full border border-red-400/30 mb-6">
-              <span className="text-2xl">🛒</span>
-              <span className="text-sm text-white font-medium">¡Ofertas de la semana!</span>
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-red-500/20 backdrop-blur-sm rounded-full border border-red-400/30 mb-4 sm:mb-6">
+              <span className="text-xl sm:text-2xl">🛒</span>
+              <span className="text-xs sm:text-sm text-white font-medium">¡Ofertas de la semana!</span>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 sm:mb-6 leading-tight">
               {HERO_CONFIG.title}
             </h1>
 
-            <p className="text-lg md:text-xl text-white/90 mb-8">
+            <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8">
               {HERO_CONFIG.subtitle}
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <button
                 onClick={() => scrollToSection("ofertas")}
-                className="px-8 py-4 bg-gradient-to-r from-red-500 to-orange-500 text-white font-semibold rounded-full hover:from-red-600 hover:to-orange-600 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-lg"
+                className="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-red-500 to-orange-500 text-white font-semibold rounded-full hover:from-red-600 hover:to-orange-600 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-base sm:text-lg"
               >
                 Ver Ofertas 🔥
               </button>
               <Link
                 to="/signup"
-                className="px-8 py-4 bg-white text-neutral-800 font-semibold rounded-full hover:bg-neutral-100 transition-all shadow-lg text-lg text-center"
+                className="px-6 sm:px-8 py-3 sm:py-4 bg-white text-neutral-800 font-semibold rounded-full hover:bg-neutral-100 transition-all shadow-lg text-base sm:text-lg text-center"
               >
                 Crear Cuenta
               </Link>
             </div>
 
             {/* Trust Badges */}
-            <div className="flex flex-wrap gap-6 mt-12">
-              <div className="flex items-center gap-2 text-white/80">
-                <span className="text-2xl">🚚</span>
-                <span className="text-sm">Envío a domicilio</span>
+            <div className="flex flex-wrap gap-4 sm:gap-6 mt-8 sm:mt-126 mt-8 sm:mt-12">
+              <div className="flex items-center gap-1.5 sm:gap-2 text-white/80">
+                <span className="text-lg sm:text-2xl">🚚</span>
+                <span className="text-xs sm:text-sm">Envío a domicilio</span>
               </div>
-              <div className="flex items-center gap-2 text-white/80">
-                <span className="text-2xl">💳</span>
-                <span className="text-sm">Pago seguro</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 text-white/80">
+                <span className="text-lg sm:text-2xl">💳</span>
+                <span className="text-xs sm:text-sm">Pago seguro</span>
               </div>
-              <div className="flex items-center gap-2 text-white/80">
-                <span className="text-2xl">✅</span>
-                <span className="text-sm">Productos frescos</span>
+              <div className="flex items-center gap-1.5 sm:gap-2 text-white/80">
+                <span className="text-lg sm:text-2xl">✅</span>
+                <span className="text-xs sm:text-sm">Productos frescos</span>
               </div>
             </div>
           </div>
@@ -358,13 +369,13 @@ export default function LandingPage() {
       </section>
 
       {/* Categories Section - Ahora usando marcas de la API */}
-      <section id="categorias" className="py-16 bg-neutral-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-800 mb-3">
+      <section id="categorias" className="py-10 sm:py-16 bg-neutral-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-800 mb-2 sm:mb-3">
               Nuestras Marcas
             </h2>
-            <p className="text-neutral-600">
+            <p className="text-sm sm:text-base text-neutral-600">
               Las mejores marcas del mercado
             </p>
           </div>
@@ -374,20 +385,31 @@ export default function LandingPage() {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
             </div>
           ) : marcas.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-4">
-              {marcas.slice(0, 12).map((marca, index) => (
-                <div
-                  key={marca.id || marca.marcaId || index}
-                  className="group flex flex-col items-center p-4 bg-white rounded-2xl border border-neutral-200 hover:border-red-300 hover:shadow-lg transition-all"
-                >
-                  <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-red-100 to-orange-100 text-red-600 flex items-center justify-center text-2xl font-bold mb-3 group-hover:scale-110 transition-transform">
-                    {(marca.nombre || "M").charAt(0).toUpperCase()}
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-4">
+              {marcas.slice(0, 12).map((marca, index) => {
+                const marcaImg = getMarcaImagen(marca);
+                return (
+                  <div
+                    key={marca.id || marca.marcaId || index}
+                    className="group flex flex-col items-center p-2 sm:p-4 bg-white rounded-xl sm:rounded-2xl border border-neutral-200 hover:border-red-300 hover:shadow-lg transition-all"
+                  >
+                    {marcaImg ? (
+                      <img
+                        src={marcaImg}
+                        alt={marca.nombre}
+                        className="w-10 h-10 sm:w-16 sm:h-16 rounded-lg sm:rounded-xl object-cover mb-2 sm:mb-3 group-hover:scale-110 transition-transform"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-lg sm:rounded-xl bg-gradient-to-br from-red-100 to-orange-100 text-red-600 flex items-center justify-center text-lg sm:text-2xl font-bold mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
+                        {(marca.nombre || "M").charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                    <span className="text-xs sm:text-sm font-medium text-neutral-700 text-center line-clamp-1">
+                      {marca.nombre || "Sin nombre"}
+                    </span>
                   </div>
-                  <span className="text-sm font-medium text-neutral-700 text-center">
-                    {marca.nombre || "Sin nombre"}
-                  </span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <p className="text-center text-neutral-500">No hay marcas disponibles</p>
@@ -396,22 +418,22 @@ export default function LandingPage() {
       </section>
 
       {/* Productos Section - Ahora usando productos de la API */}
-      <section id="ofertas" className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12">
+      <section id="ofertas" className="py-10 sm:py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 sm:mb-12">
             <div>
-              <span className="inline-block px-4 py-1 bg-red-100 text-red-600 text-sm font-semibold rounded-full mb-3">
+              <span className="inline-block px-3 sm:px-4 py-1 bg-red-100 text-red-600 text-xs sm:text-sm font-semibold rounded-full mb-2 sm:mb-3">
                 🔥 Productos Destacados
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-neutral-800 mb-2">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-800 mb-1 sm:mb-2">
                 Nuestros Productos
               </h2>
-              <p className="text-neutral-600">
+              <p className="text-sm sm:text-base text-neutral-600">
                 Descubre nuestra variedad de productos de calidad
               </p>
             </div>
-            <div className="mt-4 md:mt-0 flex items-center gap-2 text-sm text-neutral-500">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="mt-3 md:mt-0 flex items-center gap-2 text-xs sm:text-sm text-neutral-500">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
               </svg>
               {productos.length} productos disponibles
@@ -423,7 +445,7 @@ export default function LandingPage() {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
             </div>
           ) : productosDestacados.length > 0 ? (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {productosDestacados.map((producto, index) => (
                 <div
                   key={producto.id || producto.productoId || index}
@@ -433,7 +455,7 @@ export default function LandingPage() {
                     <img
                       src={getProductoImagen(producto, index)}
                       alt={producto.nombre}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-40 sm:h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                     <div className="absolute top-3 left-3">
                       <span className="inline-flex items-center px-3 py-1 bg-red-500 text-white text-sm font-bold rounded-full shadow-lg">
@@ -448,11 +470,11 @@ export default function LandingPage() {
                       </button>
                     </div>
                   </div>
-                  <div className="p-5">
+                  <div className="p-4 sm:p-5">
                     <div className="text-xs font-medium text-red-500 mb-1">
                       {getMarcaNombre(producto)}
                     </div>
-                    <h3 className="text-lg font-semibold text-neutral-800 mb-2">
+                    <h3 className="text-base sm:text-lg font-semibold text-neutral-800 mb-2 line-clamp-1">
                       {producto.nombre || "Producto sin nombre"}
                     </h3>
                     {producto.descripcion && (
@@ -498,57 +520,57 @@ export default function LandingPage() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 bg-gradient-to-br from-red-50 to-orange-50">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+      <section id="about" className="py-12 sm:py-20 bg-gradient-to-br from-red-50 to-orange-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div>
-              <span className="inline-block px-4 py-1 bg-red-100 text-red-600 text-sm font-semibold rounded-full mb-4">
+              <span className="inline-block px-3 sm:px-4 py-1 bg-red-100 text-red-600 text-xs sm:text-sm font-semibold rounded-full mb-3 sm:mb-4">
                 Sobre Nosotros
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-neutral-800 mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-800 mb-4 sm:mb-6">
                 Más de 20 años llevando calidad a tu hogar
               </h2>
-              <p className="text-neutral-600 mb-6 text-lg">
+              <p className="text-sm sm:text-base md:text-lg text-neutral-600 mb-4 sm:mb-6">
                 En <strong>{SUPERMARKET_INFO.nombre}</strong> nos dedicamos a ofrecer los mejores productos 
                 al mejor precio. Trabajamos directamente con productores locales para garantizar 
                 frescura y calidad en cada compra.
               </p>
 
-              <div className="grid sm:grid-cols-2 gap-6 mb-8">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-2xl shrink-0">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 rounded-lg sm:rounded-xl flex items-center justify-center text-xl sm:text-2xl shrink-0">
                     🌱
                   </div>
                   <div>
-                    <h4 className="font-semibold text-neutral-800 mb-1">Productos Frescos</h4>
-                    <p className="text-sm text-neutral-600">Frutas y verduras recibidas diariamente</p>
+                    <h4 className="text-sm sm:text-base font-semibold text-neutral-800 mb-0.5 sm:mb-1">Productos Frescos</h4>
+                    <p className="text-xs sm:text-sm text-neutral-600">Frutas y verduras recibidas diariamente</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-2xl shrink-0">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-100 rounded-lg sm:rounded-xl flex items-center justify-center text-xl sm:text-2xl shrink-0">
                     💰
                   </div>
                   <div>
-                    <h4 className="font-semibold text-neutral-800 mb-1">Mejores Precios</h4>
-                    <p className="text-sm text-neutral-600">Ofertas y descuentos todos los días</p>
+                    <h4 className="text-sm sm:text-base font-semibold text-neutral-800 mb-0.5 sm:mb-1">Mejores Precios</h4>
+                    <p className="text-xs sm:text-sm text-neutral-600">Ofertas y descuentos todos los días</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-2xl shrink-0">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-lg sm:rounded-xl flex items-center justify-center text-xl sm:text-2xl shrink-0">
                     🚚
                   </div>
                   <div>
-                    <h4 className="font-semibold text-neutral-800 mb-1">Delivery Rápido</h4>
-                    <p className="text-sm text-neutral-600">Entrega el mismo día en tu zona</p>
+                    <h4 className="text-sm sm:text-base font-semibold text-neutral-800 mb-0.5 sm:mb-1">Delivery Rápido</h4>
+                    <p className="text-xs sm:text-sm text-neutral-600">Entrega el mismo día en tu zona</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center text-2xl shrink-0">
+                <div className="flex items-start gap-3 sm:gap-4">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 bg-amber-100 rounded-lg sm:rounded-xl flex items-center justify-center text-xl sm:text-2xl shrink-0">
                     ⭐
                   </div>
                   <div>
-                    <h4 className="font-semibold text-neutral-800 mb-1">Calidad Garantizada</h4>
-                    <p className="text-sm text-neutral-600">Satisfacción 100% o te devolvemos tu dinero</p>
+                    <h4 className="text-sm sm:text-base font-semibold text-neutral-800 mb-0.5 sm:mb-1">Calidad Garantizada</h4>
+                    <p className="text-xs sm:text-sm text-neutral-600">Satisfacción 100% o te devolvemos tu dinero</p>
                   </div>
                 </div>
               </div>
@@ -564,43 +586,43 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            <div className="relative">
-              <div className="grid grid-cols-2 gap-4">
+            <div className="relative mt-8 lg:mt-0">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <img
                   src="https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
                   alt="Supermercado"
-                  className="rounded-2xl shadow-lg w-full h-48 object-cover"
+                  className="rounded-xl sm:rounded-2xl shadow-lg w-full h-32 sm:h-48 object-cover"
                 />
                 <img
                   src="https://images.unsplash.com/photo-1608686207856-001b95cf60ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
                   alt="Productos frescos"
-                  className="rounded-2xl shadow-lg w-full h-48 object-cover mt-8"
+                  className="rounded-xl sm:rounded-2xl shadow-lg w-full h-32 sm:h-48 object-cover mt-4 sm:mt-8"
                 />
                 <img
                   src="https://images.unsplash.com/photo-1579113800032-c38bd7635818?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
                   alt="Frutas"
-                  className="rounded-2xl shadow-lg w-full h-48 object-cover"
+                  className="rounded-xl sm:rounded-2xl shadow-lg w-full h-32 sm:h-48 object-cover"
                 />
                 <img
                   src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
                   alt="Compras"
-                  className="rounded-2xl shadow-lg w-full h-48 object-cover mt-8"
+                  className="rounded-xl sm:rounded-2xl shadow-lg w-full h-32 sm:h-48 object-cover mt-4 sm:mt-8"
                 />
               </div>
 
               {/* Stats Card */}
-              <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-white rounded-2xl p-6 shadow-xl flex gap-8">
+              <div className="absolute -bottom-4 sm:-bottom-6 left-1/2 transform -translate-x-1/2 bg-white rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-xl flex gap-4 sm:gap-8">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-red-600">10K+</div>
-                  <div className="text-sm text-neutral-500">Clientes</div>
+                  <div className="text-xl sm:text-3xl font-bold text-red-600">10K+</div>
+                  <div className="text-xs sm:text-sm text-neutral-500">Clientes</div>
                 </div>
-                <div className="text-center border-l border-neutral-200 pl-8">
-                  <div className="text-3xl font-bold text-red-600">5K+</div>
-                  <div className="text-sm text-neutral-500">Productos</div>
+                <div className="text-center border-l border-neutral-200 pl-4 sm:pl-8">
+                  <div className="text-xl sm:text-3xl font-bold text-red-600">5K+</div>
+                  <div className="text-xs sm:text-sm text-neutral-500">Productos</div>
                 </div>
-                <div className="text-center border-l border-neutral-200 pl-8">
-                  <div className="text-3xl font-bold text-red-600">20+</div>
-                  <div className="text-sm text-neutral-500">Años</div>
+                <div className="text-center border-l border-neutral-200 pl-4 sm:pl-8">
+                  <div className="text-xl sm:text-3xl font-bold text-red-600">20+</div>
+                  <div className="text-xs sm:text-sm text-neutral-500">Años</div>
                 </div>
               </div>
             </div>
@@ -609,16 +631,16 @@ export default function LandingPage() {
       </section>
 
       {/* Sucursales Section - Ahora usando sucursales de la API */}
-      <section id="sucursales" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <span className="inline-block px-4 py-1 bg-red-100 text-red-600 text-sm font-semibold rounded-full mb-3">
+      <section id="sucursales" className="py-12 sm:py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-8 sm:mb-12">
+            <span className="inline-block px-3 sm:px-4 py-1 bg-red-100 text-red-600 text-xs sm:text-sm font-semibold rounded-full mb-2 sm:mb-3">
               📍 Encuéntranos
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-neutral-800 mb-3">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-neutral-800 mb-2 sm:mb-3">
               Nuestras Sucursales
             </h2>
-            <p className="text-neutral-600 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-neutral-600 max-w-2xl mx-auto px-4">
               Visítanos en cualquiera de nuestras ubicaciones y descubre la experiencia de compra que te mereces
             </p>
           </div>
@@ -628,42 +650,44 @@ export default function LandingPage() {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500"></div>
             </div>
           ) : sucursales.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sucursales.map((sucursal, index) => (
-                <div
-                  key={sucursal.id || sucursal.sucursalId || index}
-                  className={`rounded-2xl p-6 ${
-                    index === 0
-                      ? "bg-gradient-to-br from-red-500 to-orange-500 text-white"
-                      : "bg-white border border-neutral-200 hover:shadow-lg transition-shadow"
-                  }`}
-                >
-                  {index === 0 && (
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
-                        ⭐ Principal
-                      </span>
-                    </div>
-                  )}
-                  <h3 className={`text-xl font-bold mb-4 ${index === 0 ? "text-white" : "text-neutral-800"}`}>
-                    {sucursal.nombre || "Sucursal sin nombre"}
-                  </h3>
-                  <ul className={`space-y-3 ${index === 0 ? "text-white/90" : "text-neutral-600"}`}>
-                    <li className="flex items-start gap-3">
-                      <span className="text-lg">📍</span>
-                      <span>{sucursal.direccion || "Dirección no disponible"}</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <span className="text-lg">📞</span>
-                      <span>{SUPERMARKET_INFO.telefono}</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="text-lg">🕐</span>
-                      <span className="text-sm">Lun-Sáb: 7:00-21:00<br/>Dom: 8:00-14:00</span>
-                    </li>
-                  </ul>
-                </div>
-              ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {sucursales.map((sucursal, index) => {
+                const horarioApertura = sucursal.horarioApertura || "08:00";
+                const horarioCierre = sucursal.horarioCierre || "20:00";
+                return (
+                  <div
+                    key={sucursal.id || sucursal.sucursalId || index}
+                    className={`rounded-2xl p-6 ${
+                      index === 0
+                        ? "bg-gradient-to-br from-red-500 to-orange-500 text-white"
+                        : "bg-white border border-neutral-200 hover:shadow-lg transition-shadow"
+                    }`}
+                  >
+                    {index === 0 && (
+                      <div className="flex items-center gap-2 mb-4">
+                        <span className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
+                          ⭐ Principal
+                        </span>
+                      </div>
+                    )}
+                    <h3 className={`text-xl font-bold mb-4 ${index === 0 ? "text-white" : "text-neutral-800"}`}>
+                      {sucursal.nombre || "Sucursal sin nombre"}
+                    </h3>
+                    <ul className={`space-y-3 ${index === 0 ? "text-white/90" : "text-neutral-600"}`}>
+                      <li className="flex items-start gap-3">
+                        <span className="text-lg">📍</span>
+                        <span>{sucursal.direccion || "Dirección no disponible"}</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <span className="text-lg">🕐</span>
+                        <span className="text-sm">
+                          Horario: {horarioApertura} - {horarioCierre}
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
+                );
+              })}
             </div>
           ) : (
             <p className="text-center text-neutral-500 py-12">No hay sucursales disponibles</p>
@@ -672,19 +696,19 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-red-600 to-orange-500">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+      <section className="py-10 sm:py-16 bg-gradient-to-r from-red-600 to-orange-500">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-3 sm:mb-4">
             ¿Listo para ahorrar en tus compras?
           </h2>
-          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+          <p className="text-sm sm:text-base md:text-lg text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto">
             Regístrate ahora y recibe un cupón de Bs. 50 de descuento en tu primera compra. 
             ¡Además accede a ofertas exclusivas para miembros!
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <Link
               to="/signup"
-              className="px-8 py-4 bg-white text-red-600 font-semibold rounded-full hover:bg-neutral-100 transition-colors shadow-lg text-lg"
+              className="px-6 sm:px-8 py-3 sm:py-4 bg-white text-red-600 font-semibold rounded-full hover:bg-neutral-100 transition-colors shadow-lg text-base sm:text-lg"
             >
               🎁 Obtener mi cupón
             </Link>
@@ -692,9 +716,9 @@ export default function LandingPage() {
               href={`https://wa.me/${SUPERMARKET_INFO.whatsapp.replace(/\D/g, '')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-8 py-4 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition-colors shadow-lg text-lg flex items-center justify-center gap-2"
+              className="px-6 sm:px-8 py-3 sm:py-4 bg-green-500 text-white font-semibold rounded-full hover:bg-green-600 transition-colors shadow-lg text-base sm:text-lg flex items-center justify-center gap-2"
             >
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
               </svg>
               Pedir por WhatsApp
@@ -704,21 +728,21 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-neutral-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-12">
+      <footer className="bg-neutral-900 text-white py-10 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 sm:gap-12">
             {/* Brand */}
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-orange-500 text-white text-xl">
+            <div className="sm:col-span-2">
+              <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-gradient-to-br from-red-500 to-orange-500 text-white text-lg sm:text-xl">
                   🛒
                 </div>
                 <div>
-                  <span className="text-xl font-bold block">{SUPERMARKET_INFO.nombre}</span>
-                  <span className="text-sm text-neutral-400">{SUPERMARKET_INFO.slogan}</span>
+                  <span className="text-lg sm:text-xl font-bold block">{SUPERMARKET_INFO.nombre}</span>
+                  <span className="text-xs sm:text-sm text-neutral-400">{SUPERMARKET_INFO.slogan}</span>
                 </div>
               </div>
-              <p className="text-neutral-400 mb-6 max-w-md">
+              <p className="text-sm sm:text-base text-neutral-400 mb-4 sm:mb-6 max-w-md">
                 Tu supermercado de confianza. Más de 20 años llevando calidad, frescura 
                 y los mejores precios a las familias bolivianas.
               </p>
@@ -776,10 +800,6 @@ export default function LandingPage() {
                 Contacto
               </h4>
               <ul className="space-y-3 text-neutral-300">
-                <li className="flex items-center gap-3">
-                  <span>📞</span>
-                  {SUPERMARKET_INFO.telefono}
-                </li>
                 <li className="flex items-center gap-3">
                   <span>💬</span>
                   {SUPERMARKET_INFO.whatsapp}

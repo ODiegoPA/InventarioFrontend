@@ -1,7 +1,7 @@
 // src/pages/MarcasPage.jsx
 import { useEffect, useState } from "react";
 import NavInventarioInventory from "../components/Menu";
-import { authFetch, API_BASE } from "../utils/api";
+import { authFetch, publicFetch, API_BASE, SERVER_URL } from "../utils/api";
 
 export default function MarcasPage() {
   const [marcas, setMarcas] = useState([]);
@@ -10,12 +10,12 @@ export default function MarcasPage() {
   const [message, setMessage] = useState(null);
   const [editingId, setEditingId] = useState(null);
 
-  const [form, setForm] = useState({ nombre: "" });
+  const [form, setForm] = useState({ nombre: "", foto: null, fotoPreview: "" });
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await authFetch(`${API_BASE}/marcas`);
+        const res = await publicFetch(`${API_BASE}/marcas`);
         if (!res.ok) throw new Error("No se pudo cargar marcas");
         const data = await res.json();
         setMarcas(Array.isArray(data) ? data : []);
@@ -29,7 +29,7 @@ export default function MarcasPage() {
 
   const resetForm = () => {
     setEditingId(null);
-    setForm({ nombre: "" });
+    setForm({ nombre: "", foto: null, fotoPreview: "" });
   };
 
   const handleChange = (e) => {
@@ -37,8 +37,15 @@ export default function MarcasPage() {
     setForm((f) => ({ ...f, [name]: value }));
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setForm((f) => ({ ...f, foto: file, fotoPreview: URL.createObjectURL(file) }));
+    }
+  };
+
   const loadMarcas = async () => {
-    const res = await authFetch(`${API_BASE}/marcas`);
+    const res = await publicFetch(`${API_BASE}/marcas`);
     if (!res.ok) throw new Error("No se pudo refrescar la lista de marcas");
     const data = await res.json();
     setMarcas(Array.isArray(data) ? data : []);
@@ -55,15 +62,32 @@ export default function MarcasPage() {
 
     setLoading(true);
     try {
-      const payload = { nombre: form.nombre.trim() };
+      const formData = new FormData();
+      formData.append("nombre", form.nombre.trim());
+      if (form.foto) {
+        formData.append("file", form.foto);
+      }
+
+      // Debug: ver qué se está enviando
+      console.log("=== DEBUG POST MARCAS ===");
+      console.log("form.foto:", form.foto);
+      console.log("form.fotoPreview:", form.fotoPreview);
+      console.log("FormData entries:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`  ${key}:`, value);
+      }
+      console.log("=========================");
+
       const url = editingId
         ? `${API_BASE}/marcas/${editingId}`
         : `${API_BASE}/marcas`;
       const method = editingId ? "PUT" : "POST";
 
-      const res = await authFetch(url, {
+      const token = localStorage.getItem("token");
+      const res = await fetch(url, {
         method,
-        body: JSON.stringify(payload),
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        body: formData,
       });
 
       if (!res.ok) {
@@ -87,7 +111,11 @@ export default function MarcasPage() {
   const handleEdit = (m) => {
     const id = m.id ?? m.marcaId ?? m.value ?? null;
     setEditingId(id);
-    setForm({ nombre: m.nombre ?? m.name ?? "" });
+    setForm({ 
+      nombre: m.nombre ?? m.name ?? "", 
+      foto: null, 
+      fotoPreview: m.foto ?? "" 
+    });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -146,7 +174,7 @@ export default function MarcasPage() {
           {editingId ? "Editar marca" : "Crear marca"}
         </h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="col-span-1 md:col-span-2">
+          <div className="col-span-1">
             <label className="block text-sm mb-1">Nombre</label>
             <input
               type="text"
@@ -157,6 +185,37 @@ export default function MarcasPage() {
               placeholder="Coca-Cola, Pepsi, etc."
             />
           </div>
+
+          <div className="col-span-1">
+            <label className="block text-sm mb-1">Foto</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="w-full rounded-lg border border-neutral-300 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-50 file:px-3 file:py-1 file:text-blue-700 hover:file:bg-blue-100"
+            />
+          </div>
+
+          {form.fotoPreview && (
+            <div className="col-span-1 md:col-span-2">
+              <label className="block text-sm mb-1">Vista previa</label>
+              <div className="flex items-center gap-3">
+                <img
+                  src={form.fotoPreview}
+                  alt="Vista previa"
+                  className="h-20 w-20 object-cover rounded-lg border border-neutral-200"
+                  onError={(e) => e.target.style.display = 'none'}
+                />
+                <button
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, foto: null, fotoPreview: "" }))}
+                  className="text-sm text-red-600 hover:text-red-800"
+                >
+                  Quitar imagen
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="col-span-1 md:col-span-2 flex gap-3">
             <button
@@ -194,6 +253,7 @@ export default function MarcasPage() {
             <thead className="bg-neutral-50 text-neutral-600">
               <tr>
                 <th className="px-3 py-2 text-left">ID</th>
+                <th className="px-3 py-2 text-left">Foto</th>
                 <th className="px-3 py-2 text-left">Nombre</th>
                 <th className="px-3 py-2 text-left">Acciones</th>
               </tr>
@@ -201,7 +261,7 @@ export default function MarcasPage() {
             <tbody>
               {marcas.length === 0 ? (
                 <tr>
-                  <td colSpan="3" className="px-3 py-6 text-center text-neutral-500">
+                  <td colSpan="4" className="px-3 py-6 text-center text-neutral-500">
                     No hay marcas.
                   </td>
                 </tr>
@@ -209,9 +269,18 @@ export default function MarcasPage() {
                 marcas.map((m) => {
                   const id = m.id ?? m.marcaId ?? m.value ?? "";
                   const nombre = m.nombre ?? m.name ?? "";
+                  const foto = m.foto ?? "";
+                  const fotoUrl = foto ? `${SERVER_URL}${foto}` : "";
                   return (
                     <tr key={id} className="border-t border-neutral-100">
                       <td className="px-3 py-2">{id}</td>
+                      <td className="px-3 py-2">
+                        {fotoUrl ? (
+                          <img src={fotoUrl} alt={nombre} className="h-10 w-10 object-cover rounded" />
+                        ) : (
+                          <span className="text-neutral-400">-</span>
+                        )}
+                      </td>
                       <td className="px-3 py-2">{nombre}</td>
                       <td className="px-3 py-2">
                         <div className="flex gap-2">

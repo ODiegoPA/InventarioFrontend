@@ -1,7 +1,7 @@
 // src/pages/SucursalesPage.jsx
 import { useEffect, useState } from "react";
 import NavInventarioInventory from "../components/Menu";
-import { authFetch, API_BASE } from "../utils/api";
+import { authFetch, publicFetch, API_BASE } from "../utils/api";
 
 export default function SucursalesPage() {
   const [sucursales, setSucursales] = useState([]);
@@ -13,12 +13,14 @@ export default function SucursalesPage() {
   const [form, setForm] = useState({
     nombre: "",
     direccion: "",
+    horarioApertura: "",
+    horarioCierre: "",
   });
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await authFetch(`${API_BASE}/sucursales`);
+        const res = await publicFetch(`${API_BASE}/sucursales`);
         if (!res.ok) throw new Error("No se pudo cargar sucursales");
         const data = await res.json();
         setSucursales(Array.isArray(data) ? data : []);
@@ -32,7 +34,7 @@ export default function SucursalesPage() {
 
   const resetForm = () => {
     setEditingId(null);
-    setForm({ nombre: "", direccion: "" });
+    setForm({ nombre: "", direccion: "", horarioApertura: "", horarioCierre: "" });
   };
 
   const handleChange = (e) => {
@@ -41,7 +43,7 @@ export default function SucursalesPage() {
   };
 
   const loadSucursales = async () => {
-    const res = await authFetch(`${API_BASE}/sucursales`);
+    const res = await publicFetch(`${API_BASE}/sucursales`);
     if (!res.ok) throw new Error("No se pudo refrescar la lista");
     const data = await res.json();
     setSucursales(Array.isArray(data) ? data : []);
@@ -65,6 +67,8 @@ export default function SucursalesPage() {
       const payload = {
         nombre: form.nombre.trim(),
         direccion: form.direccion.trim(),
+        horarioApertura: form.horarioApertura,
+        horarioCierre: form.horarioCierre,
       };
 
       const url = editingId
@@ -101,6 +105,8 @@ export default function SucursalesPage() {
     setForm({
       nombre: s.nombre ?? s.name ?? "",
       direccion: s.direccion ?? s.address ?? "",
+      horarioApertura: s.horarioApertura ?? "",
+      horarioCierre: s.horarioCierre ?? "",
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -186,6 +192,28 @@ export default function SucursalesPage() {
             />
           </div>
 
+          <div className="col-span-1">
+            <label className="block text-sm mb-1">Horario de Apertura</label>
+            <input
+              type="time"
+              name="horarioApertura"
+              value={form.horarioApertura}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-neutral-300 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="col-span-1">
+            <label className="block text-sm mb-1">Horario de Cierre</label>
+            <input
+              type="time"
+              name="horarioCierre"
+              value={form.horarioCierre}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-neutral-300 px-3 py-2 outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
           <div className="col-span-1 md:col-span-2 flex gap-3">
             <button
               type="submit"
@@ -225,13 +253,15 @@ export default function SucursalesPage() {
                 <th className="px-3 py-2 text-left">ID</th>
                 <th className="px-3 py-2 text-left">Nombre</th>
                 <th className="px-3 py-2 text-left">Dirección</th>
+                <th className="px-3 py-2 text-left">Apertura</th>
+                <th className="px-3 py-2 text-left">Cierre</th>
                 <th className="px-3 py-2 text-left">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {sucursales.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-3 py-6 text-center text-neutral-500">
+                  <td colSpan="6" className="px-3 py-6 text-center text-neutral-500">
                     No hay sucursales.
                   </td>
                 </tr>
@@ -240,11 +270,15 @@ export default function SucursalesPage() {
                   const id = s.id ?? s.sucursalId ?? s.value ?? "";
                   const nombre = s.nombre ?? s.name ?? "";
                   const direccion = s.direccion ?? s.address ?? "";
+                  const horarioApertura = s.horarioApertura ?? "-";
+                  const horarioCierre = s.horarioCierre ?? "-";
                   return (
                     <tr key={id} className="border-t border-neutral-100">
                       <td className="px-3 py-2">{id}</td>
                       <td className="px-3 py-2">{nombre}</td>
                       <td className="px-3 py-2">{direccion}</td>
+                      <td className="px-3 py-2">{horarioApertura}</td>
+                      <td className="px-3 py-2">{horarioCierre}</td>
                       <td className="px-3 py-2">
                         <div className="flex gap-2">
                           <button

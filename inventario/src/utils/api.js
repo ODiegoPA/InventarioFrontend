@@ -1,4 +1,19 @@
 const API_BASE = "http://localhost:8081/api";
+const SERVER_URL = "http://localhost:8081";
+
+export { SERVER_URL };
+
+/**
+ * Función fetch pública (sin Authorization) - para peticiones GET simples
+ * No envía headers personalizados para evitar preflight CORS
+ * @param {string} url - URL completa
+ * @param {object} options - Opciones de fetch
+ * @returns {Promise} - Respuesta de la API
+ */
+export async function publicFetch(url, options = {}) {
+  // Para GET simple, no enviamos headers personalizados para evitar preflight
+  return fetch(url, options);
+}
 
 /**
  * Función fetch con autenticación - reemplaza fetch nativo

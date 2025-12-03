@@ -174,13 +174,26 @@ export default function Chatbot() {
 
     // Enviar al servicio de chatbot externo. Si falla, usar fallback local.
     try {
+      const token = localStorage.getItem("token");
+      const username = localStorage.getItem("username");
+      const rol = localStorage.getItem("rol");
+      const headers = { "Content-Type": "application/json" };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const resp = await fetch(CHAT_API, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userMessage.text }),
+        headers,
+        body: JSON.stringify({ 
+          message: userMessage.text,
+          username: username || "",
+          rol: rol || ""
+        }),
       });
 
       if (resp.ok) {
+         console.log("Token de autenticación del usuario:", token)
         const data = await resp.json();
         const botText = data.response || data.reply || data.message || (await procesarMensaje(userMessage.text));
         const botMessage = { type: "bot", text: botText, time: new Date() };
@@ -235,7 +248,7 @@ export default function Chatbot() {
       {isOpen && (
         <div className="fixed bottom-24 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
           {/* Header */}
-          <div className="bg-gradient-to-r from-red-500 to-orange-500 px-5 py-4 text-white">
+          <div className="bg-gradient-to-r from-red-500 to-orange-500 px-5 py-4 text-white flex-shrink-0">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
                 🛒
@@ -251,7 +264,7 @@ export default function Chatbot() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 h-80 bg-neutral-50">
+          <div className="overflow-y-auto p-4 space-y-4 bg-neutral-50 h-80 max-h-80">
             {messages.map((msg, idx) => (
               <div
                 key={idx}
@@ -292,7 +305,7 @@ export default function Chatbot() {
           </div>
 
           {/* Input */}
-          <div className="p-4 bg-white border-t border-neutral-100">
+          <div className="p-4 bg-white border-t border-neutral-100 flex-shrink-0">
             <div className="flex gap-2">
               <input
                 type="text"

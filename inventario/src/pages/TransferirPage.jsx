@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import NavInventarioInventory from "../components/Menu";
-import { authFetch } from "../utils/api";
+import { authFetch, publicFetch } from "../utils/api";
 
 export default function TransferirPage() {
   const location = useLocation();
@@ -23,8 +23,8 @@ export default function TransferirPage() {
 
   useEffect(() => {
     Promise.all([
-      authFetch("http://localhost:8081/api/productos").then((r) => r.json()),
-      authFetch("http://localhost:8081/api/sucursales").then((r) => r.json()),
+      publicFetch("http://localhost:8081/api/productos").then((r) => r.json()),
+      publicFetch("http://localhost:8081/api/sucursales").then((r) => r.json()),
       authFetch("http://localhost:8081/api/lotes")
         .then((r) => r.json())
         .catch(() => []),

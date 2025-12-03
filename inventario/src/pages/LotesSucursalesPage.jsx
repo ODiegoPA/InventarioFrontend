@@ -1,7 +1,7 @@
 // src/pages/LoteSucursalesPage.jsx
 import { useEffect, useMemo, useState } from "react";
 import NavInventarioInventory from "../components/Menu";
-import { authFetch, API_BASE } from "../utils/api";
+import { authFetch, publicFetch, API_BASE } from "../utils/api";
 
 export default function LoteSucursalesPage() {
   const [lotes, setLotes] = useState([]);
@@ -33,7 +33,7 @@ export default function LoteSucursalesPage() {
       try {
         const [resLotes, resSuc, resLS] = await Promise.all([
           authFetch(`${API_BASE}/lotes`),
-          authFetch(`${API_BASE}/sucursales`),
+          publicFetch(`${API_BASE}/sucursales`),
           authFetch(`${API_BASE}/lote-sucursales`),
         ]);
         if (!resLotes.ok) throw new Error("No se pudo cargar lotes");
@@ -79,7 +79,7 @@ export default function LoteSucursalesPage() {
           lotesMap[String(id)]?.productoId;
 
         if (productoId) {
-          const rp = await authFetch(`${API_BASE}/productos/${productoId}`);
+          const rp = await publicFetch(`${API_BASE}/productos/${productoId}`);
           if (cancelled) return;
           if (rp.ok) {
             const prod = await rp.json();
@@ -88,7 +88,7 @@ export default function LoteSucursalesPage() {
             // 3) Marca
             const marcaId = prod?.marca?.id ?? prod?.marcaId;
             if (marcaId && !(prod?.marca?.nombre)) {
-              const rm = await authFetch(`${API_BASE}/marcas/${marcaId}`);
+              const rm = await publicFetch(`${API_BASE}/marcas/${marcaId}`);
               if (!cancelled && rm.ok) setMarcaDetalle(await rm.json());
             } else if (prod?.marca) {
               setMarcaDetalle(prod.marca);
@@ -405,7 +405,7 @@ function LoteSucursalRow({ row, lotesMap, sucursalesMap, productCache, setProduc
 
     (async () => {
       try {
-        const resp = await authFetch(`${API_BASE}/productos/${productId}`);
+        const resp = await publicFetch(`${API_BASE}/productos/${productId}`);
         if (!resp.ok) return;
         const prod = await resp.json();
         if (cancelled) return;
